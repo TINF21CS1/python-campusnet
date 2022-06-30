@@ -39,13 +39,32 @@ headers = {
 
 response = requests.get('https://dualis.dhbw.de/scripts/mgrqispi.dll?APPNAME=CampusNet&PRGNAME=COURSERESULTS&ARGUMENTS=-N591469968597102,-N000307', data="", headers=headers)
 
-print(response.text)
-
 semester = {}
 
 for match in re.findall('<option value=".*</option>', response.text):
     semester[match.split('>')[1].split('<')[0]]=match[15:30] #key=name, value=id
 
 ## Get all Prüfungen in Semester
+
+table=list() # table is cross semester, so initialized outside
+
+for semestername in semester:
+    print(semestername)
+    headers = {
+        'Host': 'dualis.dhbw.de',
+        'Cookie': cnsc,
+    }
+    response = requests.get(f'https://dualis.dhbw.de/scripts/mgrqispi.dll?APPNAME=CampusNet&PRGNAME=COURSERESULTS&ARGUMENTS=-N591469968597102,-N000307,-N{semester[semestername]}', data="", headers=headers) #get page with Prüfungen Table
+    temptable = re.findall('<table class="nb list">[\s\S]*</table>', response.text)[0] # extract table from html body
+    temptable = re.findall('<tbody>[\s\S]*</tbody>', temptable)[0] # extract table body from table
+    temprows = temptable.split('<tr')[1:-1] # extract all rows from table. [0] is just <tbody ...>
+
+    for row in temprows:
+        tempcells = row.split('<td')[1:] # extract all columns from table
+        currentrow = list()
+        for cell in tempcells:
+            cell = cell.split('>', 1)[1].split('</td')[0] # extract content from cell
+            currentrow.append(cell) # combine cells to row
+        table.append(currentrow) # combine rows to table
 
 ## Get Prüfungen Results
