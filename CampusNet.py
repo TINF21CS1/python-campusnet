@@ -18,6 +18,7 @@ class Module:
     semester: str
     id: str
     grade: Union[float, None] = None
+    
 
 @dataclass
 class Exam:
@@ -207,7 +208,7 @@ class CampusNetSession:
                 except ValueError:
                     grade = None
                 exams.append(Exam(
-                    semester=module.semester,
+                    semester=cells[0].text.strip(),
                     description=cells[1].text.strip(),
                     grade=grade,
                 ))
