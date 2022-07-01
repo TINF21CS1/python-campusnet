@@ -22,6 +22,7 @@ class Module:
 
 @dataclass
 class Exam:
+    name: str
     semester: str
     description: str
     grade: Union[float, None] = None
@@ -209,14 +210,18 @@ class CampusNetSession:
         exams = []
         for row in exam_table.find_all("tr"):
             cells = row.find_all('td')
+            if len(cells) == 1 and 'level02' in cells[0]["class"]:
+                tempexamname = cells[0].text.strip() #temp variable to persist into the next for loops
             if len(cells) == 6 and all("tbdata" in cell["class"] for cell in cells):
                 try:
                     grade = float(cells[3].text.strip().replace(",", "."))
                 except ValueError:
                     grade = None
                 exams.append(Exam(
+                    name=tempexamname,
                     semester=cells[0].text.strip(),
                     description=cells[1].text.strip(),
                     grade=grade,
                 ))
+                del tempexamname #remove temp variable after using to avoid missatribution
         return exams
