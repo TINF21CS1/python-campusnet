@@ -8,33 +8,51 @@ pip install git+https://github.com/TINF21CS1/python-campusnet@dev
 
 ## Usage Examples
 
-### Exam Script
+### Getting all exams and grades
 
-The [`print_exams_as_table.py`](utils/print_exams_as_table.py) in `utils` script that is included in this repository will easily retrieve all Exams for a user and print them in a pretty table. This makes a quick overview very easy.
+The module can be used directly to get information about all exams
 
 ```
-$ python print_exams_as_table.py
-Username (mit @!): s2xxxxx@student.dhbw-mannheim.de
+$ python -m campusnet -h
+usage: python -m campusnet [-h] [-b BASE_URL] [-o {table,json,csv}] username [password]
+
+Get exams from CampusNet instance.
+
+positional arguments:
+  username              Username (including domain)
+  password              Password (will be read from stdin if not supplied)
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -b BASE_URL, --base-url BASE_URL
+                        Base URL of the CampusNet instance (default: https://dualis.dhbw.de/)
+  -o {table,json,csv}, --output {table,json,csv}
+                        Output format of the data (default: table)
+```
+
+```
+$ python -m campusnet s*******@student.dhbw-mannheim.de -b https://dualis.dhbw.de
 Password: 
----------  ----------------------------------------  ------------------------------------------------------  ------------  --------------------------------------------  ---
+Module     Name                                      Exam                                                    Semester      Description                                     Grade
+---------  ----------------------------------------  ------------------------------------------------------  ------------  --------------------------------------------  -------
 T3_1000    Praxisprojekt I                           T3_1000.1 Projektarbeit 1 (MA-TINF21CS1)                SoSe 2022     Projektarbeit (1%)
 T3_1000    Praxisprojekt I                           T3_1000.2 Wissenschaftliches Arbeiten 1 (MA-TINF21CS1)  SoSe 2022     Ablauf- und Reflexionsbericht (1%)
-T3INF1001  Mathematik I                              T3INF1001.1 Lineare Algebra (MA-TINF21CS1)              WiSe 2021/22  Klausurarbeit (50%)                           2.9
-T3INF1001  Mathematik I                              T3INF1001.2 Analysis (MA-TINF21CS1)                     SoSe 2022     Klausurarbeit (50%)                           3.1
+T3INF1001  Mathematik I                              T3INF1001.1 Lineare Algebra (MA-TINF21CS1)              WiSe 2021/22  Klausurarbeit (50%)                               *.*
+T3INF1001  Mathematik I                              T3INF1001.2 Analysis (MA-TINF21CS1)                     SoSe 2022     Klausurarbeit (50%)                               *.*
 T3INF1002  Theoretische Informatik I (MA-TINF21CS1)  Modulabschlussleistungen                                SoSe 2022     Klausurarbeit (100%)
 T3INF1003  Theoretische Informatik II                Modulabschlussleistungen                                SoSe 2022     Klausurarbeit (100%)
 T3INF1004  Programmieren                             Modulabschlussleistungen                                SoSe 2022     Programmentwurf (100%)
 T3INF1005  Schlüsselqualifikationen                  Modulabschlussleistungen                                SoSe 2022     Klausurarbeit (< 50 %) (100%)
 T3INF4102  Einführung in die Kryptologie             Modulabschlussleistungen                                SoSe 2022     Klausur 75 % und Laborarbeit 25 % (100%)
 T3INF9000  Web and App Engineering                   Modulabschlussleistungen                                SoSe 2022     Klausur 50 % und Programmentwurf 50 % (100%)
-T3INF1006  Technische Informatik I                   Modulabschlussleistungen                                WiSe 2021/22  Klausurarbeit (100%)                          4
-T3INF9001  Cyber Security Basics                     Modulabschlussleistungen                                WiSe 2021/22  Hausarbeit (100%)                             2.1
----------  ----------------------------------------  ------------------------------------------------------  ------------  --------------------------------------------  ---
+T3INF1006  Technische Informatik I                   Modulabschlussleistungen                                WiSe 2021/22  Klausurarbeit (100%)                              *.*
+T3INF9001  Cyber Security Basics                     Modulabschlussleistungen                                WiSe 2021/22  Hausarbeit (100%)                                 *.*
+```---------------------------------------  ---
 ```
 
 ### Python Package
 
-You can also use CampusNet.py as an imported Package to interact in detail with CampusNet.
+You can also use `campusnet` as a package to interact with CampusNet from Python.
 
 ```python
 $ python
@@ -50,4 +68,4 @@ $ python
 
 This package is still work in progress. If you need data from CampusNet, that is currently not retrieved by it, please feel free to open an Issue or even PR for it.
 
-We are studying at DHBW Mannheim, so this package is tested with [https://dualis.dhbw.de](https://dualis.dhbw.de). But it should also be compatible with other CampusNet instances from other universities.
+We are studying at DHBW Mannheim, so this package is tested with [https://dualis.dhbw.de](https://dualis.dhbw.de). But it should also be compatible with other CampusNet instances from other universities. If you have acess to another CampusNet instance and use our script, let us know how it goes :).
