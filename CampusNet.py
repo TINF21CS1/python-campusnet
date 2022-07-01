@@ -105,6 +105,11 @@ class CampusNetSession:
         :return: A list of semesters.
         """
         response = self.session.get(self.create_url('COURSERESULTS'))
+        # The webservice doesn't correctly set Content-Type: text/html; charset=utf-8
+        # so requests uses ISO-8859-1 which is not correct. Requests is smart enough to
+        # convert the response to UTF-8 if we tell it to take a guess at the real encoding.
+        # also see https://stackoverflow.com/a/52615216
+        response.encoding = response.apparent_encoding
         soup = BeautifulSoup(response.text, 'html.parser')
         semesters = {}
         for semester in soup.find_all('option'):
@@ -137,7 +142,12 @@ class CampusNetSession:
                 'sessionno': self.session_number,
                 'menuno': '000307'
             })
-
+            # The webservice doesn't correctly set Content-Type: text/html; charset=utf-8
+            # so requests uses ISO-8859-1 which is not correct. Requests is smart enough to
+            # convert the response to UTF-8 if we tell it to take a guess at the real encoding.
+            # also see https://stackoverflow.com/a/52615216
+            response.encoding = response.apparent_encoding
+            print(response.text)
             soup = BeautifulSoup(response.text, 'html.parser')
             table = soup.find('table', {'class': 'nb list'})
             for row in table.find_all('tr')[1:]:
@@ -182,6 +192,11 @@ class CampusNetSession:
         :return: A list of exams.
         """
         response = self.session.get(self.create_url('RESULTDETAILS', f",-N{module.id}"))
+        # The webservice doesn't correctly set Content-Type: text/html; charset=utf-8
+        # so requests uses ISO-8859-1 which is not correct. Requests is smart enough to
+        # convert the response to UTF-8 if we tell it to take a guess at the real encoding.
+        # also see https://stackoverflow.com/a/52615216
+        response.encoding = response.apparent_encoding
         soup = BeautifulSoup(response.text, 'html.parser')
         exam_table = soup.find('table', {'class': 'tb'})
         exams = []
