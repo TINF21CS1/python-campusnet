@@ -147,7 +147,6 @@ class CampusNetSession:
             # convert the response to UTF-8 if we tell it to take a guess at the real encoding.
             # also see https://stackoverflow.com/a/52615216
             response.encoding = response.apparent_encoding
-            print(response.text)
             soup = BeautifulSoup(response.text, 'html.parser')
             table = soup.find('table', {'class': 'nb list'})
             for row in table.find_all('tr')[1:]:
