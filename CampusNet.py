@@ -148,10 +148,8 @@ class CampusNetSession:
                     except ValueError:
                         grade = None
                     # getting id for this module
-                    exams_button = cells[5]
-                    # FIXME: This is a hack, looking for a specific substring in JavaScript code.
-                    exams_script = exams_button.find('script').text
-                    exams_id = exams_script.split('","Resultdetails"')[0].split(",-N")[-1]
+                    exams_button = cells[5].find("a")
+                    exams_id = exams_button.get("href").split(",-N")[-2]
                     modules.append(Module(
                         num=cells[0].text.strip(),
                         name=cells[1].text.strip(),
