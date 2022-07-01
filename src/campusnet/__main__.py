@@ -21,7 +21,8 @@ if __name__ == "__main__":
 
     while True:
         try:
-            s = campusnet.CampusNetSession(args.username, password)
+            s = campusnet.CampusNetSession(
+                args.username, password, args.base_url)
             break
         except campusnet.LoginError as e:
             print("Invalid username or password.")
