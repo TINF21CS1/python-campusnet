@@ -4,6 +4,8 @@ from dataclasses import dataclass
 import requests
 from bs4 import BeautifulSoup
 
+__version__ = (0, 0, 1)
+
 
 class LoginError(ValueError):
     pass
@@ -18,7 +20,7 @@ class Module:
     semesters: List[str]
     id: str
     grade: Union[float, None] = None
-    
+
 
 @dataclass
 class Exam:
@@ -26,6 +28,7 @@ class Exam:
     semester: str
     description: str
     grade: Union[float, None] = None
+
 
 class CampusNetSession:
     def __init__(self, username: str = None, password: str = None, base_url="https://dualis.dhbw.de/"):
@@ -57,12 +60,13 @@ class CampusNetSession:
             return self.base_url + "/scripts/mgrqispi.dll"
 
     """
+    From the CampusNet website:
     ```javascript
     >>> reloadpage.createUrlAndReload.toString()
     function(dispatcher, applicationName, programName, sessionNo, menuId,args){
         [...]
-		window.location.href = dispatcher + \"?APPNAME=\" + applicationName + \"&PRGNAME=\" + programName + \"&ARGUMENTS=-N\" + sessionNo + \",-N\" + menuId  + temp_args;
-	}
+        window.location.href = dispatcher + \"?APPNAME=\" + applicationName + \"&PRGNAME=\" + programName + \"&ARGUMENTS=-N\" + sessionNo + \",-N\" + menuId  + temp_args;
+    }
     ```
     """
 
@@ -212,7 +216,7 @@ class CampusNetSession:
         for row in exam_table.find_all("tr"):
             cells = row.find_all('td')
             if len(cells) == 1 and 'level02' in cells[0]["class"]:
-                current_heading = cells[0].text.strip() #variable to persist header into the next iteration
+                current_heading = cells[0].text.strip()  # variable to persist header into the next iteration
             if len(cells) == 6 and all("tbdata" in cell["class"] for cell in cells):
                 try:
                     grade = float(cells[3].text.strip().replace(",", "."))
