@@ -2,12 +2,9 @@
 
 ## Installation
 
-```´
-git clone https://github.com/TINF21CS1/python-campusnet/
-pip install .
-```  
-
-Pushing to PyPi soon.
+```
+pip install git+https://github.com/TINF21CS1/python-campusnet@dev
+```
 
 ## Usage Examples
 
