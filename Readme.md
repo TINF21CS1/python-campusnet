@@ -1,13 +1,22 @@
 # CampusNet Python
 
+## Installation
+
+```´
+git clone https://github.com/TINF21CS1/python-campusnet/
+pip install .
+```  
+
+Pushing to PyPi soon.
+
 ## Usage Examples
 
 ### Exam Script
 
-The `print_exams_as_table.py` script that is included in this repository will easily retrieve all Exams for a user and print them in a pretty table. This makes a quick overview very easy.
+The [`print_exams_as_table.py`](utils/print_exams_as_table.py) in `utils` script that is included in this repository will easily retrieve all Exams for a user and print them in a pretty table. This makes a quick overview very easy.
 
 ```
-PS > python .\print_exams_as_table.py
+$ python print_exams_as_table.py
 Username (mit @!): s2xxxxx@student.dhbw-mannheim.de
 Password: 
 ---------  ----------------------------------------  ------------------------------------------------------  ------------  --------------------------------------------  ---
