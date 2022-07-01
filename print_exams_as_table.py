@@ -1,8 +1,9 @@
 import CampusNet
 from tabulate import tabulate
+from getpass import getpass
 
 username = input("Username (mit @!): ")
-password = input("Password: ")
+password = getpass()
 
 s = CampusNet.CampusNetSession(username, password)
 
