@@ -1,5 +1,5 @@
 import sys
-from typing import Union
+from typing import Union, List
 from dataclasses import dataclass
 import requests
 from bs4 import BeautifulSoup
@@ -15,9 +15,10 @@ class Module:
     name: str
     credits: float
     status: str
-    semester: str
+    semesters: List[str]
     id: str
     grade: Union[float, None] = None
+    
 
 @dataclass
 class Exam:
@@ -159,15 +160,22 @@ class CampusNetSession:
                     # getting id for this module
                     exams_button = cells[5].find("a")
                     exams_id = exams_button.get("href").split(",-N")[-2]
-                    modules.append(Module(
-                        num=cells[0].text.strip(),
-                        name=cells[1].text.strip(),
-                        credits=float(cells[3].text.strip().replace(',', '.')),
-                        status=cells[4].text.strip(),
-                        semester=semester,
-                        id=exams_id,
-                        grade=grade
-                    ))
+                    num = cells[0].text.strip()
+                    if not any(module.num == num for module in modules):
+                        modules.append(Module(
+                            num=num,
+                            name=cells[1].text.strip(),
+                            credits=float(cells[3].text.strip().replace(',', '.')),
+                            status=cells[4].text.strip(),
+                            semesters=[semester],
+                            id=exams_id,
+                            grade=grade
+                        ))
+                    else:
+                        for module in modules:
+                            if module.num == num:
+                                module.semesters.append(semester)
+                                break
                 elif len(cells) != 0:
                     # FIXME: proper logging
                     print("Unexpected number of cells:",
@@ -207,7 +215,7 @@ class CampusNetSession:
                 except ValueError:
                     grade = None
                 exams.append(Exam(
-                    semester=module.semester,
+                    semester=cells[0].text.strip(),
                     description=cells[1].text.strip(),
                     grade=grade,
                 ))
