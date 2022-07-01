@@ -22,7 +22,7 @@ class Module:
 
 @dataclass
 class Exam:
-    name: str
+    name: Union[str, None]
     semester: str
     description: str
     grade: Union[float, None] = None
@@ -208,20 +208,20 @@ class CampusNetSession:
         soup = BeautifulSoup(response.text, 'html.parser')
         exam_table = soup.find('table', {'class': 'tb'})
         exams = []
+        current_heading = None
         for row in exam_table.find_all("tr"):
             cells = row.find_all('td')
             if len(cells) == 1 and 'level02' in cells[0]["class"]:
-                tempexamname = cells[0].text.strip() #temp variable to persist into the next for loops
+                current_heading = cells[0].text.strip() #variable to persist header into the next iteration
             if len(cells) == 6 and all("tbdata" in cell["class"] for cell in cells):
                 try:
                     grade = float(cells[3].text.strip().replace(",", "."))
                 except ValueError:
                     grade = None
                 exams.append(Exam(
-                    name=tempexamname,
+                    name=current_heading,
                     semester=cells[0].text.strip(),
                     description=cells[1].text.strip(),
                     grade=grade,
                 ))
-                del tempexamname #remove temp variable after using to avoid missatribution
         return exams
