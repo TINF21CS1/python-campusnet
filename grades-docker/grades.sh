@@ -3,9 +3,11 @@
 echo $PASSWORD | openconnect -b --user=$VPNUSERNAME --authgroup=$AUTHGROUP --passwd-on-stdin $HOST
 echo "$(date +"%b %d %H:%M:%S") $HOSTNAME grades.sh[$$]: Started openconnect in background."
  
+ echo "$(date +"%b %d %H:%M:%S") $HOSTNAME grades.sh[$$]: Getting grades from Campusnet."
 python3 -m campusnet $USERNAME $PASSWORD -o table > /tmp/grades.txt
 if [ ! -s grades.txt ]; then
     mv /tmp/grades.txt grades.txt
+    echo "$(date +"%b %d %H:%M:%S") $HOSTNAME grades.sh[$$]: First run, created grades.txt."
     exit 0
 fi
 /usr/bin/diff grades.txt /tmp/grades.txt > /tmp/diff.txt
