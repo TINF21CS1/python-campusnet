@@ -7,6 +7,6 @@ if [ ! -s grades.txt ]; then
 fi
 /usr/bin/diff grades.txt /tmp/grades.txt > /tmp/diff.txt
 if [ -s /tmp/diff.txt ]; then
-    (echo -e 'Subject: Grades changed\n\n'; cat /tmp/diff.txt; echo -e '\n\nAll grades:\n'; cat /tmp/grades.txt) | /usr/sbin/sendmail $NOTIFY_RECIPIENT
+    (echo -e "From: Grades <${USERNAME}>\nSubject: Grades changed\n\n"; cat /tmp/diff.txt; echo -e '\n\nAll grades:\n'; cat /tmp/grades.txt) | /usr/sbin/sendmail $NOTIFY_RECIPIENT
 fi
 mv /tmp/grades.txt grades.tx
