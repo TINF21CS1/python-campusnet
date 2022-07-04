@@ -11,7 +11,7 @@ RUN pip install git+https://github.com/TINF21CS1/python-campusnet@dev
 COPY grades.sh /app/grades.sh
 RUN chmod 777 /app/grades.sh; chmod +x /app/grades.sh
 RUN crontab -l /cron
-RUN echo "0 7-23 * * * /app/grades.sh" >> /cron
+RUN echo "0 7-23 * * * /bin/sh /app/grades.sh" >> /cron
 RUN crontab /cron
 RUN rm /cron
 
