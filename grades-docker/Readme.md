@@ -1,0 +1,1 @@
+docker run --privileged -e "USERNAME=s212689@student.dhbw-mannheim.de" -e "VPNUSERNAME=s212689" -e "PASSWORD=xxxxxxxxxxxxxxxx" 9cccf8dd9ca9
