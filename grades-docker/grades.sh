@@ -1,4 +1,7 @@
 #!/bin/bash
+
+echo $PASSWORD | openconnect -b --user=$VPNUSERNAME --authgroup=$AUTHGROUP --passwd-on-stdin $HOST
+echo "$(date +"%b %d %H:%M:%S") $HOSTNAME grades.sh[$$]: Started openconnect in background."
  
 python3 -m campusnet $USERNAME $PASSWORD -o table > /tmp/grades.txt
 if [ ! -s grades.txt ]; then
@@ -12,4 +15,7 @@ if [ -s /tmp/diff.txt ]; then
 else
     echo "$(date +"%b %d %H:%M:%S") $HOSTNAME grades.sh[$$]: No changes detected."
 fi
-mv /tmp/grades.txt grades.tx
+mv /tmp/grades.txt grades.txt
+
+/usr/bin/killall openconnect
+echo "$(date +"%b %d %H:%M:%S") $HOSTNAME grades.sh[$$]: Killed openconnect."
