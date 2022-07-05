@@ -8,7 +8,24 @@ pip install git+https://github.com/TINF21CS1/python-campusnet@dev
 
 ## Usage Examples
 
-### Getting all exams and grades
+### Grade Notifier with Docker
+
+This docker container will check your grade every hour and send a notification mail, if something has changed. Currently this docker container is very tailored for DHBW-Mannheim students. But feel free to broaden its usability with a PR.
+
+3 Environment variables are needed:
+
+* `USERNAME`: Your student mail address with the domain part. That is also used to login to CampusNet (Dualis)
+* `VPNUSERNAME`: Your username without the domain part. Used for the login with Anyconnect VPN, to send mails.
+* `PASSWORD`: Your account password. Used for VPN, Campusnet and Mail authentication.
+* Optional `NOTIFY_RECIPIENT`: Mail address that will receive notifications. By default the same as `USERNAME`.
+
+```
+docker run --privileged -e "USERNAME=s212689@student.dhbw-mannheim.de" -e "VPNUSERNAME=s212689" -e "PASSWORD=xxxxxxxxxxxxxxxx" ghcr.io/tinf21cs1/campusnet-grade-notifier
+```
+
+[Detailed Readme](./grades-docker/Readme.md)
+
+### Getting Exams and Grades directly
 
 The module can be used directly to get information about all exams
 
