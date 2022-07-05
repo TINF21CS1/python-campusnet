@@ -1,0 +1,38 @@
+name: Grade Notifier Docker Publish
+
+on:
+  push:
+    branches:
+      - main
+      - dev*
+
+jobs:
+  docker-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: |
+            ghcr.io/tinf21cs1/campusnet-grade-notifier
+          # tags: latest, if default branch; name of branch; name of semver tag
+          tags: | 
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=ref,event=branch
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v2
+        with:
+          platforms: linux/amd64
+          context: ./grades-docker
+          push: true # will only push if not a pull_request
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
