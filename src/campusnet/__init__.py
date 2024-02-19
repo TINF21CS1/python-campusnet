@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import requests
 from bs4 import BeautifulSoup
 
-VERSION = "0.3"
+VERSION = "0.4"
 
 
 class LoginError(ValueError):
