@@ -1,3 +1,4 @@
+import re
 import sys
 from typing import Union, List
 from dataclasses import dataclass
@@ -100,10 +101,9 @@ class CampusNetSession:
         # url will be "/scripts/mgrqispi.dll?APPNAME=CampusNet&PRGNAME=STARTPAGE_DISPATCH&ARGUMENTS=-N954433323189667,-N000019,-N000000000000000"
         # and arguments will be "-N954433323189667,-N000019,-N000000000000000"
         # 954433323189667 is the session id, 000019 is the menu id and -N000000000000000 are temporary arguments
-        url = "=".join(response.headers["Refresh"].split(";")[
-                       1].strip().split("=")[1:])
-        arguments = url.split("ARGUMENTS=")[1]
-        self.session_number = arguments.split(",")[0][2:]
+        self.session_number = re.match(
+            r"^.*-N(\d+),-N(\d+),-N(\d+)$", response.headers["Refresh"]
+        ).group(1)
 
     def _get_semesters(self):
         """
