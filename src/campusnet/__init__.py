@@ -32,7 +32,12 @@ class Exam:
 
 
 class CampusNetSession:
-    def __init__(self, username: str = None, password: str = None, base_url="https://dualis.dhbw.de/"):
+    def __init__(
+        self,
+        username: str = None,
+        password: str = None,
+        base_url="https://dualis.dhbw.de/",
+    ):
         """
         Initialize a new CampusNetSession.
         :param username: The username of the user.
@@ -81,20 +86,23 @@ class CampusNetSession:
         :raises:
             LoginError: If the login failed.
         """
-        response = self.session.post(self.mgrqispi, data={
-            'usrname': self.username,
-            'pass': self.password,
-            'APPNAME': 'CampusNet',
-            'PRGNAME': 'LOGINCHECK',
-            'ARGUMENTS': 'clino,usrname,pass,menuno,menu_type,browser,platform',
-            'clino': '000000000000001',
-            'menuno': '000324',
-            'menu_type': 'classic',
-            'browser': '',
-            'platform': '',
-        })
+        response = self.session.post(
+            self.mgrqispi,
+            data={
+                "usrname": self.username,
+                "pass": self.password,
+                "APPNAME": "CampusNet",
+                "PRGNAME": "LOGINCHECK",
+                "ARGUMENTS": "clino,usrname,pass,menuno,menu_type,browser,platform",
+                "clino": "000000000000001",
+                "menuno": "000324",
+                "menu_type": "classic",
+                "browser": "",
+                "platform": "",
+            },
+        )
         if len(response.cookies) == 0:  # We didn't get a session token in response
-            raise LoginError('Login failed.')
+            raise LoginError("Login failed.")
 
         # The header looks like this
         # 0; URL=/scripts/mgrqispi.dll?APPNAME=CampusNet&PRGNAME=STARTPAGE_DISPATCH&ARGUMENTS=-N954433323189667,-N000019,-N000000000000000
@@ -110,16 +118,16 @@ class CampusNetSession:
         Get the semesters from the CampusNet.
         :return: A list of semesters.
         """
-        response = self.session.get(self.create_url('COURSERESULTS'))
+        response = self.session.get(self.create_url("COURSERESULTS"))
         # The webservice doesn't correctly set Content-Type: text/html; charset=utf-8
         # so requests uses ISO-8859-1 which is not correct. Requests is smart enough to
         # convert the response to UTF-8 if we tell it to take a guess at the real encoding.
         # also see https://stackoverflow.com/a/52615216
         response.encoding = response.apparent_encoding
-        soup = BeautifulSoup(response.text, 'html.parser')
+        soup = BeautifulSoup(response.text, "html.parser")
         semesters = {}
-        for semester in soup.find_all('option'):
-            semesters[semester.text] = semester.get('value')
+        for semester in soup.find_all("option"):
+            semesters[semester.text] = semester.get("value")
         return semesters
 
     @property
@@ -139,24 +147,27 @@ class CampusNetSession:
         """
         modules = []
         for semester in self.semesters:
-            response = self.session.post(self.mgrqispi, data={
-                'APPNAME': 'CampusNet',
-                'semester': self.semesters[semester],
-                'Refresh': 'Aktualisieren',
-                'PRGNAME': 'COURSERESULTS',
-                'ARGUMENTS': 'sessionno,menuno,semester',
-                'sessionno': self.session_number,
-                'menuno': '000307'
-            })
+            response = self.session.post(
+                self.mgrqispi,
+                data={
+                    "APPNAME": "CampusNet",
+                    "semester": self.semesters[semester],
+                    "Refresh": "Aktualisieren",
+                    "PRGNAME": "COURSERESULTS",
+                    "ARGUMENTS": "sessionno,menuno,semester",
+                    "sessionno": self.session_number,
+                    "menuno": "000307",
+                },
+            )
             # The webservice doesn't correctly set Content-Type: text/html; charset=utf-8
             # so requests uses ISO-8859-1 which is not correct. Requests is smart enough to
             # convert the response to UTF-8 if we tell it to take a guess at the real encoding.
             # also see https://stackoverflow.com/a/52615216
             response.encoding = response.apparent_encoding
-            soup = BeautifulSoup(response.text, 'html.parser')
-            table = soup.find('table', {'class': 'nb list'})
-            for row in table.find_all('tr')[1:]:
-                cells = row.find_all('td')
+            soup = BeautifulSoup(response.text, "html.parser")
+            table = soup.find("table", {"class": "nb list"})
+            for row in table.find_all("tr")[1:]:
+                cells = row.find_all("td")
                 if len(cells) == 7:
                     try:
                         grade = float(cells[2].text.strip().replace(",", "."))
@@ -167,16 +178,17 @@ class CampusNetSession:
                     exams_id = exams_button.get("href").split(",-N")[-2]
                     num = cells[0].text.strip()
                     if not any(module.num == num for module in modules):
-                        modules.append(Module(
-                            num=num,
-                            name=cells[1].text.strip(),
-                            credits=float(
-                                cells[3].text.strip().replace(',', '.')),
-                            status=cells[4].text.strip(),
-                            semesters=[semester],
-                            id=exams_id,
-                            grade=grade
-                        ))
+                        modules.append(
+                            Module(
+                                num=num,
+                                name=cells[1].text.strip(),
+                                credits=float(cells[3].text.strip().replace(",", ".")),
+                                status=cells[4].text.strip(),
+                                semesters=[semester],
+                                id=exams_id,
+                                grade=grade,
+                            )
+                        )
                     else:
                         for module in modules:
                             if module.num == num:
@@ -184,8 +196,7 @@ class CampusNetSession:
                                 break
                 elif len(cells) != 0:
                     # FIXME: proper logging
-                    print("Unexpected number of cells:",
-                          len(cells), file=sys.stderr)
+                    print("Unexpected number of cells:", len(cells), file=sys.stderr)
         return modules
 
     @property
@@ -204,20 +215,19 @@ class CampusNetSession:
         :param module: The module.
         :return: A list of exams.
         """
-        response = self.session.get(self.create_url(
-            'RESULTDETAILS', f",-N{module.id}"))
+        response = self.session.get(self.create_url("RESULTDETAILS", f",-N{module.id}"))
         # The webservice doesn't correctly set Content-Type: text/html; charset=utf-8
         # so requests uses ISO-8859-1 which is not correct. Requests is smart enough to
         # convert the response to UTF-8 if we tell it to take a guess at the real encoding.
         # also see https://stackoverflow.com/a/52615216
         response.encoding = response.apparent_encoding
-        soup = BeautifulSoup(response.text, 'html.parser')
-        exam_table = soup.find('table', {'class': 'tb'})
+        soup = BeautifulSoup(response.text, "html.parser")
+        exam_table = soup.find("table", {"class": "tb"})
         exams = []
         current_heading = None
         for row in exam_table.find_all("tr"):
-            cells = row.find_all('td')
-            if len(cells) == 1 and 'level02' in cells[0]["class"]:
+            cells = row.find_all("td")
+            if len(cells) == 1 and "level02" in cells[0]["class"]:
                 # variable to persist header into the next iteration
                 current_heading = cells[0].text.strip()
             if len(cells) == 6 and all("tbdata" in cell["class"] for cell in cells):
@@ -225,10 +235,12 @@ class CampusNetSession:
                     grade = float(cells[3].text.strip().replace(",", "."))
                 except ValueError:
                     grade = None
-                exams.append(Exam(
-                    name=current_heading,
-                    semester=cells[0].text.strip(),
-                    description=cells[1].text.strip(),
-                    grade=grade,
-                ))
+                exams.append(
+                    Exam(
+                        name=current_heading,
+                        semester=cells[0].text.strip(),
+                        description=cells[1].text.strip(),
+                        grade=grade,
+                    )
+                )
         return exams
