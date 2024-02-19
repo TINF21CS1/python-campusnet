@@ -1,7 +1,8 @@
 import campusnet
 from argparse import ArgumentParser
 
-if __name__ == "__main__":
+
+def main():
     parser = ArgumentParser(
         prog="python -m campusnet", description="Get exams from CampusNet instance."
     )
@@ -104,3 +105,7 @@ if __name__ == "__main__":
                 )
         writer = csv.writer(sys.stdout)
         writer.writerows(out)
+
+
+if __name__ == "__main__":
+    main()
